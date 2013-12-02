@@ -1,0 +1,9 @@
+#!/bin/bash
+g++  -c -I/usr/local/include lib/e3ga.cpp -o build/e3ga.o
+g++  -c -I/usr/local/include lib/test_utils.cpp -o build/test_utils.o
+g++  -c -I/usr/local/include alg_test.cpp -o build/alg_test.o
+g++  \
+     build/e3ga.o build/e3ga_parse_mv.o build/test_utils.o\
+     build/alg_test.o \
+     -lm \
+     -o alg_test

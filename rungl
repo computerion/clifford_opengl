@@ -1,0 +1,9 @@
+#!/bin/bash
+g++    -c -g -MMD -MP -MF build/pipeline.o.d -o build/pipeline.o lib/pipeline.cpp
+g++    -c -g -MMD -MP -MF build/math_3d.o.d -o build/math_3d.o lib/math_3d.cpp
+g++    -c -g -MMD -MP -MF build/camera.o.d -o build/camera.o lib/camera.cpp
+g++    -c -g -MMD -MP -MF build/gl_test.o.d -o build/gl_test.o gl_test.cpp
+g++  -c -I/usr/local/include lib/e3ga.cpp -o build/e3ga.o
+g++  -c -I/usr/local/include lib/test_utils.cpp -o build/test_utils.o
+g++     -o gl_test build/e3ga.o build/e3ga_parse_mv.o build/camera.o build/math_3d.o build/test_utils.o build/pipeline.o build/gl_test.o -lglut -lGLEW -lGL
+
