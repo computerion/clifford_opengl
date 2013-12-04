@@ -58,7 +58,11 @@ static void bindBuffer(){
 static void updateVertices(Pipeline p) {
     Matrix4f mat = *p.GetTrans();
     for(int i=0;i<4;i++){
+    //   cout<<endl<<i<<" "<<b_Vertices[i].x<<" "<<b_Vertices[i].y<<" "<<b_Vertices[i].z<<endl;
         mat.updateVector(Vertices[i], b_Vertices[i]);
+        cout<<i<<" "<<Vertices[i].x<<" "<<Vertices[i].y<<" "<<Vertices[i].z<<endl;
+        //setPseudoPerspective(Vertices[i]);
+      //  cout<<i<<" "<<Vertices[i].x<<" "<<Vertices[i].y<<" "<<Vertices[i].z<<endl;
     }
 }
 
@@ -72,7 +76,7 @@ static void RenderSceneCB()
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
-    p.WorldPos(0.0f, 0.0f, 3.0f);
+    p.WorldPos(0.0f, 0.0f, 0.0f);
     p.SetCamera(GameCamera.GetPos(), GameCamera.GetTarget(), GameCamera.GetUp());
     p.SetPerspectiveProj(60.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 100.0f);
 
@@ -110,11 +114,18 @@ static void CreateVertexBuffer()
     for(int i=0;i<4;i++){
         Vertices[i] = Vector3f();
     }
+/*
+b_Vertices[0] = Vector3f(-0.649519,-0.866025,1.34646);
+b_Vertices[1] = Vector3f(0,-0.866025, 0.734343);
+b_Vertices[2] = Vector3f(0.649519, -0.866025, 1.44848);
+b_Vertices[3] = Vector3f(0,0.866025,1.0404);
+*/
 
     b_Vertices[0] = Vector3f(-0.5f, -0.5f, 0.3f);
     b_Vertices[1] = Vector3f(0.0f, -0.5f, -0.3f);
     b_Vertices[2] = Vector3f(0.5f, -0.5f, 0.4f);
     b_Vertices[3] = Vector3f(0.0f, 0.5f, 0.0f);
+
 }
 
 

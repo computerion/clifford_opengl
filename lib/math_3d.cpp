@@ -1,4 +1,17 @@
 #include "math_3d.h"
+#include "test_utils.h"
+#include "e3ga.h"
+
+using namespace e3ga;
+extern mv **e, **be, **w, **sw; //The e's, bar e's, w's, and w stars
+extern double **coords; //Used for construction of the above arrays and for deallocation
+
+void setPseudoPerspective(Vector3f &vertex){
+    mv shearLeft = shear_left(3,0,1);
+    mv shearRight = shear_right(3,0,1);
+    vertex.applyRotors(shearLeft, shearRight);
+}
+
 
 Vector3f Vector3f::Cross(const Vector3f& v) const
 {

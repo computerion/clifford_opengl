@@ -9,6 +9,8 @@
 #include <math.h>
 #endif
 #include "e3ga.h"
+#include <iostream>
+using namespace std;
 
 using namespace e3ga;
 extern mv **e, **be, **w, **sw; //The e's, bar e's, w's, and w stars
@@ -47,13 +49,15 @@ struct Vector3f
         return x * *w[1] + y * *w[2] + z * *w[3];
     }
 
-    void applyRotor(mv left, mv right){
+    void applyRotors(mv left, mv right){
         mv vectorForm = to_mv();
         mv product = gp(left, gp(vectorForm, right));
+        cout<<x<<" "<<y<<" "<<z<<endl;
         const double *coord = product.getC();
-        x = (float) coord[0];
-        y = (float) coord[1];
-        z = (float) coord[2];
+        x = (float) coord[1];
+        y = (float) coord[2];
+        z = (float) coord[3];
+        cout<<product.toString()<<endl<<vectorForm.toString()<<endl;
     }
 
     Vector3f& operator-=(const Vector3f& r)
@@ -159,6 +163,8 @@ public:
     void InitCameraTransform(const Vector3f& Target, const Vector3f& Up);
     void InitPersProjTransform(float FOV, float Width, float Height, float zNear, float zFar);
 };
+
+void setPseudoPerspective(Vector3f &vertex);
 
 
 #endif	/* MATH_3D_H */
