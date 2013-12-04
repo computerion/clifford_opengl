@@ -1,23 +1,3 @@
-/*
-
-    Copyright 2010 Etay Meiri
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    Tutorial 14 - Camera Control - Part 1
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -38,7 +18,6 @@ int ORDER = 12;
 
 GLuint VBO;
 GLuint IBO;
-GLuint gWVPLocation;
 Vector3f Vertices[4];
 Vector3f b_Vertices[4];
 
@@ -49,15 +28,12 @@ static const char* pVS = "                                                      
                                                                                     \n\
 layout (location = 0) in vec3 Position;                                             \n\
                                                                                     \n\
-//uniform mat4 gWVP;                                                                  \n\
                                                                                     \n\
 out vec4 Color;                                                                     \n\
                                                                                     \n\
 void main()                                                                         \n\
 {                                                                                   \n\
-//    gl_Position = gWVP * vec4(Position, 1.0);                                       \n\
-//    gl_Position = vec4(Position, 1.0); \n\
-      gl_Position = vec4(Position.x, Position.y, Position.z, 1.0); \n\
+      gl_Position = vec4(Position.x, Position.y, Position.z, Position.z);           \n\
     Color = vec4(clamp(Position, 0.0, 1.0), 1.0);                                   \n\
 }";
 
@@ -79,6 +55,13 @@ static void bindBuffer(){
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 }
 
+static void updateVertices(Pipeline p) {
+    Matrix4f mat = *p.GetTrans();
+    for(int i=0;i<4;i++){
+        mat.updateVector(Vertices[i], b_Vertices[i]);
+    }
+}
+
 static void RenderSceneCB()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -89,18 +72,12 @@ static void RenderSceneCB()
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
-    p.WorldPos(0.0f, 0.0f, 0.0f);
+    p.WorldPos(0.0f, 0.0f, 3.0f);
     p.SetCamera(GameCamera.GetPos(), GameCamera.GetTarget(), GameCamera.GetUp());
     p.SetPerspectiveProj(60.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 100.0f);
 
-    Matrix4f mat = /*p.getPerspective() */ *p.GetTrans();
-    for(int i=0;i<4;i++){
-        mat.updateVector(Vertices[i], b_Vertices[i]);
-        //printf("%f %f %f\n", Vertices[i].x,  Vertices[i].y,  Vertices[i].z);
-        //printf("what? %f, %f, %f\n", b_Vertices[i].x, b_Vertices[i].y, b_Vertices[i].z);
-    }
+    updateVertices(p);
     bindBuffer();
-  //  glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -130,10 +107,9 @@ static void InitializeGlutCallbacks()
 
 static void CreateVertexBuffer()
 {
-    Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
-    Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475f);
-    Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
-    Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);
+    for(int i=0;i<4;i++){
+        Vertices[i] = Vector3f();
+    }
 
     b_Vertices[0] = Vector3f(-0.5f, -0.5f, 0.3f);
     b_Vertices[1] = Vector3f(0.0f, -0.5f, -0.3f);
@@ -214,9 +190,6 @@ static void CompileShaders()
     }
 
     glUseProgram(ShaderProgram);
-
-   // gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
-    //assert(gWVPLocation != 0xFFFFFFFF);
 }
 
 int main(int argc, char** argv)
@@ -226,7 +199,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow("Tutorial 14");
+    glutCreateWindow("OpenGL Clifford Algebra Test");
 
     InitializeGlutCallbacks();
 
